@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Yapılacaklar</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root {
     color-scheme: light dark;
@@ -33,6 +34,7 @@
     }
   }
   * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
   body {
     margin: 0;
     min-height: 100vh;
@@ -41,21 +43,15 @@
     color: var(--fg);
     display: flex;
     justify-content: center;
-    padding: 56px 32px;
+    padding: 72px 20px;
   }
-  .app { width: 100%; max-width: 1200px; }
-  header { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 32px; }
-  #sutunlar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; }
-  @media (max-width: 800px) { #sutunlar { grid-template-columns: 1fr; } header { flex-direction: column; } }
-  section { min-width: 0; }
-  h2 { margin: 0 0 14px; font-size: 16px; font-weight: 600; }
-  h2 span { color: var(--muted); font-weight: 400; }
-  .hata { color: var(--danger); font-size: 14px; margin-bottom: 20px; }
+  .app { width: 100%; max-width: 520px; }
+  header { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 28px; }
   h1 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -.01em; }
-  form { display: flex; gap: 8px; margin-bottom: 8px; }
-  form input {
+  h1 span { color: var(--muted); font-weight: 400; }
+  .hata { color: var(--danger); font-size: 14px; margin: 12px 0; }
+  input[type=text], input[type=password] {
     min-width: 0;
-    flex: 1;
     padding: 10px 12px;
     font: inherit;
     color: inherit;
@@ -64,8 +60,9 @@
     border-radius: 6px;
     outline: none;
   }
-  form input:focus { border-color: var(--accent); background: var(--bg); }
+  input[type=text]:focus, input[type=password]:focus { border-color: var(--accent); background: var(--bg); }
   button { cursor: pointer; border: none; background: none; font: inherit; color: inherit; }
+  button:disabled { opacity: .5; cursor: default; }
   .ekle {
     background: var(--accent);
     color: var(--accent-fg);
@@ -74,7 +71,19 @@
     font-size: 14px;
   }
   .ekle:hover { opacity: .85; }
-  .filtreler { display: flex; gap: 16px; font-size: 14px; }
+  .link { color: var(--muted); font-size: 13px; }
+  .link:hover { color: var(--fg); }
+
+  /* Giriş */
+  #giris { max-width: 320px; margin: 0 auto; }
+  #giris h1 { margin-bottom: 24px; }
+  #giris form { display: flex; flex-direction: column; gap: 10px; }
+  #giris .ekle { padding: 11px; }
+
+  /* Liste */
+  #yeniForm { display: flex; gap: 8px; }
+  #yeniForm input { flex: 1; }
+  .filtreler { display: flex; gap: 16px; margin: 20px 0 6px; font-size: 14px; }
   .filtreler button { color: var(--muted); padding: 2px 0; border-bottom: 1px solid transparent; }
   .filtreler button:hover { color: var(--fg); }
   .filtreler button.aktif { color: var(--fg); border-bottom-color: var(--fg); }
@@ -90,176 +99,207 @@
   li .metin { flex: 1; font-size: 15px; word-break: break-word; cursor: text; }
   li.bitti .metin { text-decoration: line-through; color: var(--muted); }
   li .duzenle {
-    flex: 1; font: inherit; font-size: 15px; color: inherit;
-    padding: 2px 6px; margin: -3px 0;
-    background: var(--field); border: 1px solid var(--accent); border-radius: 4px; outline: none;
+    flex: 1; font-size: 15px; padding: 2px 6px; margin: -3px 0;
+    border: 1px solid var(--accent) !important;
   }
   li .sil { color: var(--muted); font-size: 18px; line-height: 1; padding: 0 4px; opacity: 0; transition: opacity .15s; }
   li .sil:hover { color: var(--danger); }
   li:hover .sil { opacity: 1; }
-  .alt {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 16px;
-    font-size: 13px;
-    color: var(--muted);
-  }
-  .alt button { color: var(--muted); }
-  .alt button:hover { color: var(--fg); }
+  @media (hover: none) { li .sil { opacity: 1; } }
+  .alt { display: flex; justify-content: space-between; margin-top: 16px; font-size: 13px; color: var(--muted); }
   .bos { text-align: center; color: var(--muted); padding: 32px 0; font-size: 14px; }
   .ipucu { font-size: 12px; color: var(--muted); margin-top: 40px; text-align: center; opacity: .7; }
 </style>
 </head>
 <body>
 <div class="app">
-  <header>
+
+  <!-- Giriş ekranı -->
+  <section id="giris" hidden>
     <h1>Yapılacaklar</h1>
+    <form id="girisForm">
+      <input id="kullanici" type="text" placeholder="Kullanıcı adı" autocomplete="username" autocapitalize="none" required>
+      <input id="sifre" type="password" placeholder="Şifre" autocomplete="current-password" required>
+      <button class="ekle" type="submit">Giriş yap</button>
+    </form>
+    <div id="girisHata" class="hata" hidden></div>
+  </section>
+
+  <!-- Kullanıcının listesi -->
+  <section id="uygulama" hidden>
+    <header>
+      <h1><span id="ad"></span> <span>yapılacak</span></h1>
+      <button id="cikis" class="link">Çıkış yap</button>
+    </header>
+    <form id="yeniForm">
+      <input id="yeni" type="text" placeholder="Yeni görev..." autocomplete="off">
+      <button class="ekle" type="submit">Ekle</button>
+    </form>
     <div class="filtreler">
       <button data-f="hepsi" class="aktif">Hepsi</button>
       <button data-f="aktif">Aktif</button>
       <button data-f="bitti">Tamamlanan</button>
     </div>
-  </header>
-  <div id="hata" class="hata" hidden></div>
-  <main id="sutunlar"></main>
-  <div class="ipucu">Düzenlemek için göreve çift tıkla</div>
+    <div id="hata" class="hata" hidden></div>
+    <ul id="liste"></ul>
+    <div class="alt">
+      <span id="sayac"></span>
+      <button id="temizle" class="link">Tamamlananları sil</button>
+    </div>
+    <div class="ipucu">Düzenlemek için göreve çift tıkla</div>
+  </section>
+
 </div>
 
 <script>
-  // Supabase bağlantısı (publishable anahtar tarayıcıda kullanılmak içindir)
+  // Supabase bağlantısı (publishable anahtar tarayıcıda kullanılmak içindir;
+  // veriler, giriş yapan kullanıcıya göre veritabanındaki RLS kurallarıyla korunur)
   const SUPABASE_URL = "https://phipqnqnuntcoawnorqj.supabase.co";
   const SUPABASE_KEY = "sb_publishable_lD7YDH7PRRz1WKO6wdx1uQ_effusaoB";
-  const API = SUPABASE_URL + "/rest/v1/todos";
-  const KISILER = ["Ziya", "Emir", "Mehmet"];
+  // Kullanıcı adları Supabase'de "<kullanıcı adı>@todo.example.com" e-postası olarak tutulur
+  const EPOSTA_UZANTISI = "@todo.example.com";
+
+  const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const $ = id => document.getElementById(id);
 
   let gorevler = [];
   let filtre = "hepsi";
   let yukleniyor = true;
   let duzenleniyor = false;
-  const sutun = {}; // kişi -> { liste, sayac }
+  let kullanici = null;
 
-  async function istek(yol, secenek = {}) {
-    const cevap = await fetch(API + yol, {
-      ...secenek,
-      headers: {
-        apikey: SUPABASE_KEY,
-        "Content-Type": "application/json",
-        Prefer: "return=representation",
-        ...(secenek.headers || {})
-      }
-    });
-    if (!cevap.ok) throw new Error(cevap.status + " " + (await cevap.text()));
-    return cevap.status === 204 ? null : cevap.json();
+  // ---------- Giriş / çıkış ----------
+  function kullaniciAdi(user) {
+    const ad = user.email.replace(EPOSTA_UZANTISI, "");
+    return ad.charAt(0).toLocaleUpperCase("tr") + ad.slice(1);
   }
 
+  function ekraniGoster(user) {
+    kullanici = user;
+    $("giris").hidden = !!user;
+    $("uygulama").hidden = !user;
+    if (user) {
+      $("ad").textContent = kullaniciAdi(user);
+      yukleniyor = true;
+      gorevler = [];
+      ciz();
+      yukle();
+      $("yeni").focus();
+    } else {
+      $("kullanici").focus();
+    }
+  }
+
+  $("girisForm").onsubmit = async e => {
+    e.preventDefault();
+    const ad = $("kullanici").value.trim().toLocaleLowerCase("tr");
+    const buton = e.target.querySelector("button");
+    buton.disabled = true;
+    $("girisHata").hidden = true;
+    const { data, error } = await db.auth.signInWithPassword({
+      email: ad + EPOSTA_UZANTISI,
+      password: $("sifre").value
+    });
+    buton.disabled = false;
+    if (error) {
+      $("girisHata").textContent = error.message === "Invalid login credentials"
+        ? "Kullanıcı adı veya şifre hatalı."
+        : "Giriş yapılamadı: " + error.message;
+      $("girisHata").hidden = false;
+      return;
+    }
+    $("sifre").value = "";
+    ekraniGoster(data.user);
+  };
+
+  $("cikis").onclick = async () => {
+    await db.auth.signOut();
+    ekraniGoster(null);
+  };
+
+  // ---------- Veri işlemleri ----------
   function hataGoster(mesaj) {
-    const h = document.getElementById("hata");
-    h.textContent = mesaj;
-    h.hidden = !mesaj;
+    $("hata").textContent = mesaj;
+    $("hata").hidden = !mesaj;
   }
 
   async function calistir(is) {
-    try {
-      await is();
-      hataGoster("");
-    } catch (e) {
-      hataGoster("Supabase hatası: " + e.message);
-      console.error(e);
-    }
+    const { error } = await is();
+    hataGoster(error ? "Hata: " + error.message : "");
     ciz();
   }
 
-  async function yukle() {
-    await calistir(async () => {
-      gorevler = await istek("?select=*&order=created_at.asc");
-    });
+  const yukle = () => calistir(async () => {
+    const sonuc = await db.from("todos").select("*").order("created_at");
     yukleniyor = false;
-    ciz();
-  }
+    if (!sonuc.error) gorevler = sonuc.data;
+    return sonuc;
+  });
 
-  const ekle = (kisi, metin) => calistir(async () => {
-    const [yeni] = await istek("", { method: "POST", body: JSON.stringify({ kisi, metin }) });
-    gorevler.push(yeni);
+  const ekle = metin => calistir(async () => {
+    const sonuc = await db.from("todos").insert({ metin }).select().single();
+    if (!sonuc.error) gorevler.push(sonuc.data);
+    return sonuc;
   });
 
   const guncelle = (g, alanlar) => calistir(async () => {
-    const [yeni] = await istek("?id=eq." + g.id, { method: "PATCH", body: JSON.stringify(alanlar) });
-    Object.assign(g, yeni);
+    const sonuc = await db.from("todos").update(alanlar).eq("id", g.id).select().single();
+    if (!sonuc.error) Object.assign(g, sonuc.data);
+    return sonuc;
   });
 
   const sil = ids => ids.length && calistir(async () => {
-    await istek("?id=in.(" + ids.join(",") + ")", { method: "DELETE" });
-    gorevler = gorevler.filter(g => !ids.includes(g.id));
+    const sonuc = await db.from("todos").delete().in("id", ids);
+    if (!sonuc.error) gorevler = gorevler.filter(g => !ids.includes(g.id));
+    return sonuc;
   });
 
-  // Sütunları bir kez kur; sonraki çizimlerde sadece listeler yenilenir
-  KISILER.forEach(kisi => {
-    const bolum = document.createElement("section");
-    bolum.innerHTML = `
-      <h2>${kisi} <span>yapılacak</span></h2>
-      <form><input type="text" placeholder="Yeni görev..." autocomplete="off"><button class="ekle" type="submit">Ekle</button></form>
-      <ul></ul>
-      <div class="alt"><span class="sayac"></span><button class="temizle">Tamamlananları sil</button></div>`;
-    const giris = bolum.querySelector("input");
-    bolum.querySelector("form").onsubmit = e => {
-      e.preventDefault();
-      const metin = giris.value.trim();
-      if (!metin) return;
-      giris.value = "";
-      ekle(kisi, metin);
-    };
-    bolum.querySelector(".temizle").onclick = () =>
-      sil(gorevler.filter(g => g.kisi === kisi && g.bitti).map(g => g.id));
-    sutun[kisi] = { liste: bolum.querySelector("ul"), sayac: bolum.querySelector(".sayac") };
-    document.getElementById("sutunlar").appendChild(bolum);
-  });
-
+  // ---------- Çizim ----------
   function ciz() {
     duzenleniyor = false;
-    KISILER.forEach(kisi => {
-      const { liste, sayac } = sutun[kisi];
-      liste.innerHTML = "";
-      if (yukleniyor) {
-        liste.innerHTML = '<div class="bos">Yükleniyor...</div>';
-        return;
-      }
-      const kendi = gorevler.filter(g => g.kisi === kisi);
-      const gorunen = kendi.filter(g =>
-        filtre === "hepsi" ? true : filtre === "aktif" ? !g.bitti : g.bitti
-      );
-      if (gorunen.length === 0) liste.innerHTML = '<div class="bos">Görev yok</div>';
+    const liste = $("liste");
+    liste.innerHTML = "";
+    if (yukleniyor) {
+      liste.innerHTML = '<div class="bos">Yükleniyor...</div>';
+      $("sayac").textContent = "";
+      return;
+    }
+    const gorunen = gorevler.filter(g =>
+      filtre === "hepsi" ? true : filtre === "aktif" ? !g.bitti : g.bitti
+    );
+    if (gorunen.length === 0) liste.innerHTML = '<div class="bos">Görev yok</div>';
 
-      gorunen.forEach(g => {
-        const li = document.createElement("li");
-        if (g.bitti) li.classList.add("bitti");
+    gorunen.forEach(g => {
+      const li = document.createElement("li");
+      if (g.bitti) li.classList.add("bitti");
 
-        const kutu = document.createElement("input");
-        kutu.type = "checkbox";
-        kutu.checked = g.bitti;
-        kutu.onchange = () => guncelle(g, { bitti: kutu.checked });
+      const kutu = document.createElement("input");
+      kutu.type = "checkbox";
+      kutu.checked = g.bitti;
+      kutu.onchange = () => guncelle(g, { bitti: kutu.checked });
 
-        const metin = document.createElement("span");
-        metin.className = "metin";
-        metin.textContent = g.metin;
-        metin.ondblclick = () => duzenle(li, metin, g);
+      const metin = document.createElement("span");
+      metin.className = "metin";
+      metin.textContent = g.metin;
+      metin.ondblclick = () => duzenle(li, metin, g);
 
-        const silBtn = document.createElement("button");
-        silBtn.className = "sil";
-        silBtn.textContent = "×";
-        silBtn.title = "Sil";
-        silBtn.onclick = () => sil([g.id]);
+      const silBtn = document.createElement("button");
+      silBtn.className = "sil";
+      silBtn.textContent = "×";
+      silBtn.title = "Sil";
+      silBtn.onclick = () => sil([g.id]);
 
-        li.append(kutu, metin, silBtn);
-        liste.appendChild(li);
-      });
-
-      sayac.textContent = kendi.filter(g => !g.bitti).length + " görev kaldı";
+      li.append(kutu, metin, silBtn);
+      liste.appendChild(li);
     });
+
+    $("sayac").textContent = gorevler.filter(g => !g.bitti).length + " görev kaldı";
   }
 
   function duzenle(li, metin, g) {
     duzenleniyor = true;
     const inp = document.createElement("input");
+    inp.type = "text";
     inp.className = "duzenle";
     inp.value = g.metin;
     li.replaceChild(inp, metin);
@@ -282,6 +322,14 @@
     inp.onblur = () => bitir(true);
   }
 
+  $("yeniForm").onsubmit = e => {
+    e.preventDefault();
+    const metin = $("yeni").value.trim();
+    if (!metin) return;
+    $("yeni").value = "";
+    ekle(metin);
+  };
+
   document.querySelectorAll(".filtreler button").forEach(b => {
     b.onclick = () => {
       filtre = b.dataset.f;
@@ -291,13 +339,15 @@
     };
   });
 
-  // Diğerlerinin değişikliklerini görmek için: sekmeye dönünce ve 20 saniyede bir yenile
-  const yenile = () => { if (!duzenleniyor && !document.hidden) yukle(); };
+  $("temizle").onclick = () => sil(gorevler.filter(g => g.bitti).map(g => g.id));
+
+  // Başka cihazdaki değişiklikleri görmek için: sekmeye dönünce ve 20 saniyede bir yenile
+  const yenile = () => { if (kullanici && !duzenleniyor && !document.hidden) yukle(); };
   window.addEventListener("focus", yenile);
   setInterval(yenile, 20000);
 
-  ciz();
-  yukle();
+  // Açılışta kayıtlı oturum varsa direkt listeye geç
+  db.auth.getSession().then(({ data }) => ekraniGoster(data.session ? data.session.user : null));
 </script>
 </body>
 </html>
