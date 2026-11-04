@@ -79,6 +79,8 @@
   #giris h1 { margin-bottom: 24px; }
   #giris form { display: flex; flex-direction: column; gap: 10px; }
   #giris .ekle { padding: 11px; }
+  .gecis { margin-top: 20px; font-size: 13px; color: var(--muted); text-align: center; }
+  .link-vurgu { color: var(--fg); font-size: 13px; text-decoration: underline; text-underline-offset: 2px; }
 
   /* Liste */
   #yeniForm { display: flex; gap: 8px; }
@@ -120,9 +122,14 @@
     <form id="girisForm">
       <input id="kullanici" type="text" placeholder="Kullanıcı adı" autocomplete="username" autocapitalize="none" required>
       <input id="sifre" type="password" placeholder="Şifre" autocomplete="current-password" required>
-      <button class="ekle" type="submit">Giriş yap</button>
+      <input id="sifre2" type="password" placeholder="Şifre (tekrar)" autocomplete="new-password" hidden>
+      <button id="girisButon" class="ekle" type="submit">Giriş yap</button>
     </form>
     <div id="girisHata" class="hata" hidden></div>
+    <div class="gecis">
+      <span id="gecisMetin">Hesabın yok mu?</span>
+      <button id="gecisButon" type="button" class="link-vurgu">Kayıt ol</button>
+    </div>
   </section>
 
   <!-- Kullanıcının listesi -->
@@ -190,25 +197,60 @@
     }
   }
 
+  let kayitModu = false;
+
+  function girisHatasi(mesaj) {
+    $("girisHata").textContent = mesaj;
+    $("girisHata").hidden = !mesaj;
+  }
+
+  $("gecisButon").onclick = () => {
+    kayitModu = !kayitModu;
+    $("sifre2").hidden = !kayitModu;
+    $("sifre2").required = kayitModu;
+    $("sifre").autocomplete = kayitModu ? "new-password" : "current-password";
+    $("sifre").placeholder = kayitModu ? "Şifre (en az 8 karakter)" : "Şifre";
+    $("girisButon").textContent = kayitModu ? "Kayıt ol" : "Giriş yap";
+    $("gecisMetin").textContent = kayitModu ? "Zaten hesabın var mı?" : "Hesabın yok mu?";
+    $("gecisButon").textContent = kayitModu ? "Giriş yap" : "Kayıt ol";
+    girisHatasi("");
+    $("kullanici").focus();
+  };
+
+  const HATALAR = {
+    invalid_credentials: "Kullanıcı adı veya şifre hatalı.",
+    user_already_exists: "Bu kullanıcı adı alınmış.",
+    weak_password: "Şifre en az 8 karakter olmalı.",
+    over_request_rate_limit: "Çok fazla deneme yapıldı, biraz bekleyip tekrar dene.",
+    over_email_send_rate_limit: "Çok fazla deneme yapıldı, biraz bekleyip tekrar dene."
+  };
+
   $("girisForm").onsubmit = async e => {
     e.preventDefault();
-    const ad = $("kullanici").value.trim().toLocaleLowerCase("tr");
-    const buton = e.target.querySelector("button");
-    buton.disabled = true;
-    $("girisHata").hidden = true;
-    const { data, error } = await db.auth.signInWithPassword({
-      email: ad + EPOSTA_UZANTISI,
-      password: $("sifre").value
-    });
-    buton.disabled = false;
-    if (error) {
-      $("girisHata").textContent = error.message === "Invalid login credentials"
-        ? "Kullanıcı adı veya şifre hatalı."
-        : "Giriş yapılamadı: " + error.message;
-      $("girisHata").hidden = false;
-      return;
+    const ad = $("kullanici").value.trim().toLowerCase();
+    const sifre = $("sifre").value;
+
+    if (!/^[a-z0-9._-]{3,20}$/.test(ad)) {
+      return girisHatasi("Kullanıcı adı 3-20 karakter olmalı; sadece İngilizce harf, rakam, nokta, tire ve alt çizgi içerebilir.");
     }
+    if (kayitModu && sifre.length < 8) return girisHatasi("Şifre en az 8 karakter olmalı.");
+    if (kayitModu && sifre !== $("sifre2").value) return girisHatasi("Şifreler aynı değil.");
+
+    const buton = $("girisButon");
+    buton.disabled = true;
+    girisHatasi("");
+    const bilgi = { email: ad + EPOSTA_UZANTISI, password: sifre };
+    const { data, error } = kayitModu
+      ? await db.auth.signUp(bilgi)
+      : await db.auth.signInWithPassword(bilgi);
+    buton.disabled = false;
+
+    if (error) {
+      return girisHatasi(HATALAR[error.code] || (kayitModu ? "Kayıt olunamadı: " : "Giriş yapılamadı: ") + error.message);
+    }
+    if (!data.session) return girisHatasi("Kayıt oluşturuldu ama oturum açılamadı. Giriş yapmayı dene.");
     $("sifre").value = "";
+    $("sifre2").value = "";
     ekraniGoster(data.user);
   };
 
