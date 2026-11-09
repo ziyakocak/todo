@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-09T00:00:00Z",
+  "title": "Design System: Yapılacaklar",
+  "extensions": {
+    "colorMeta": {
+      "red":    { "role": "primary", "displayName": "Takvim Kırmızısı", "canonical": "#c8102e", "dark": "#ff5468", "tonalRamp": ["#3a0610", "#5e0a1a", "#860e25", "#c8102e", "#e0384f", "#f06e7e", "#f7a8b1", "#fcdde1"] },
+      "red-bg": { "role": "primary", "displayName": "Kırmızı Baskı Zemini", "canonical": "#c8102e", "dark": "#e0263f", "tonalRamp": ["#3a0610", "#5e0a1a", "#860e25", "#c8102e", "#e0263f", "#f06e7e", "#f7a8b1", "#fcdde1"] },
+      "on-red": { "role": "neutral", "displayName": "Kırmızı Üstü Beyaz", "canonical": "#ffffff", "dark": "#ffffff", "tonalRamp": ["#1b1b1d", "#3a3a3d", "#5c5c5c", "#808080", "#a6a6a6", "#cccccc", "#ececec", "#ffffff"] },
+      "wall":   { "role": "neutral", "displayName": "Duvar Grisi", "canonical": "#d9dadc", "dark": "#0b0b0c", "tonalRamp": ["#1e1f21", "#3a3b3e", "#5a5b5e", "#7c7d80", "#9fa0a3", "#bfc0c2", "#d9dadc", "#eeeff0"] },
+      "leaf":   { "role": "neutral", "displayName": "Yaprak Beyazı", "canonical": "#ffffff", "dark": "#1b1b1d", "tonalRamp": ["#1b1b1d", "#3a3a3d", "#5c5c5c", "#808080", "#a6a6a6", "#cccccc", "#f3f3f3", "#ffffff"] },
+      "ink":    { "role": "neutral", "displayName": "Mürekkep", "canonical": "#111111", "dark": "#ececec", "tonalRamp": ["#111111", "#2a2a2a", "#444444", "#5c5c5c", "#808080", "#a6a6a6", "#cccccc", "#ececec"] },
+      "muted":  { "role": "neutral", "displayName": "Soluk Mürekkep", "canonical": "#5c5c5c", "dark": "#a6a6a6", "tonalRamp": ["#1f1f1f", "#333333", "#474747", "#5c5c5c", "#7a7a7a", "#a6a6a6", "#cfcfcf", "#ececec"] },
+      "line":   { "role": "neutral", "displayName": "Delik Çizgisi", "canonical": "#b4b4b4", "dark": "#46464a", "tonalRamp": ["#262626", "#46464a", "#6a6a6a", "#8e8e8e", "#b4b4b4", "#cccccc", "#e2e2e2", "#f3f3f3"] },
+      "field":  { "role": "neutral", "displayName": "Kâğıt Gölgesi", "canonical": "#f3f3f3", "dark": "#242427", "tonalRamp": ["#242427", "#3a3a3d", "#5c5c5c", "#808080", "#a6a6a6", "#cccccc", "#e6e6e6", "#f3f3f3"] },
+      "strip":  { "role": "neutral", "displayName": "Cilt Siyahı", "canonical": "#111111", "dark": "#2c2c30", "tonalRamp": ["#111111", "#2c2c30", "#444444", "#5c5c5c", "#808080", "#a6a6a6", "#cccccc", "#ececec"] }
+    },
+    "typographyMeta": {
+      "display":  { "displayName": "Gün Numarası", "purpose": "Yalnızca kırmızı dev gün numarası; telefonda 112px." },
+      "headline": { "displayName": "Gün Adı", "purpose": "Büyük harfli gün adı; ay/yıl satırı aynı yüzde 36px." },
+      "numeral":  { "displayName": "Sayaç", "purpose": "Kalan/biten sayaç rakamları; telefonda 30px." },
+      "title":    { "displayName": "Başlık", "purpose": "Sağ sütun başlığı; telefonda 24px." },
+      "body-lg":  { "displayName": "Görev Metni", "purpose": "Görev satırı ve satır içi düzenleme; telefonda 17px." },
+      "body":     { "displayName": "Gövde", "purpose": "Gövde, birincil düğme (700), boş durum." },
+      "label":    { "displayName": "Etiket", "purpose": "Sekmeler, sayaç etiketleri, bağlantılar, alt bilgi, hata." }
+    },
+    "shadows": [
+      { "name": "takvim-blogu", "value": "0 1px 0 var(--line), 0 4px 0 -1px var(--leaf), 0 5px 0 -1px var(--line), 0 8px 0 -2px var(--leaf), 0 9px 0 -2px var(--line), 0 12px 0 -3px var(--leaf), 0 13px 0 -3px var(--line), 0 26px 40px -18px rgb(0 0 0 / .4)", "purpose": "Yalnızca takvim yaprağı: alttaki günlerin kenarları ve destenin duvara düşen gölgesi." }
+    ],
+    "motion": [
+      { "name": "kop", "value": "0.6s cubic-bezier(.5, 0, .85, .4) forwards; 60ms satır arası gecikme", "purpose": "Tamamlananları kopar: satır yırtılır, sarkar, düşerek kaybolur. Azaltılmış harekette 0.01s." },
+      { "name": "arac-belir", "value": "opacity .15s", "purpose": "Satır ikon düğmelerinin üzerine gelince/odakta belirmesi." }
+    ],
+    "breakpoints": [
+      { "name": "telefon", "value": "760px" }
+    ],
+    "focus": { "value": "outline: 2px solid var(--red); outline-offset: 3px", "purpose": "Tüm odaklanabilir öğeler." }
+  },
+  "components": [
+    {
+      "name": "Kırmızı Düğme",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Birincil eylem (Ekle, Giriş yap, Kayıt ol).",
+      "html": "<button class=\"ds-kirmizi\" type=\"button\">Ekle</button>",
+      "css": ".ds-kirmizi { background: var(--red-bg, #c8102e); color: var(--on-red, #fff); font-family: Archivo, system-ui, sans-serif; font-weight: 700; font-size: 17px; padding: 0 28px; min-height: 54px; border: 0; border-radius: 0; cursor: pointer; } .ds-kirmizi:hover { filter: brightness(1.08); } .ds-kirmizi:focus-visible { outline: 2px solid var(--red, #c8102e); outline-offset: 3px; } .ds-kirmizi:disabled { opacity: .5; cursor: default; }"
+    },
+    {
+      "name": "Ekleme Alanı",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Yeni görev ve giriş alanları; kırmızı düğmeyle bitişik durur.",
+      "html": "<form class=\"ds-ekle\"><input class=\"ds-alan\" type=\"text\" placeholder=\"Yeni görev yaz...\" aria-label=\"Yeni görev\"><button class=\"ds-ekle-btn\" type=\"button\">Ekle</button></form>",
+      "css": ".ds-ekle { display: flex; } .ds-alan { flex: 1; min-width: 0; height: 54px; padding: 0 16px; background: var(--leaf, #fff); color: var(--ink, #111); border: 2px solid var(--ink, #111); border-radius: 0; outline: none; font: 400 18px Archivo, system-ui, sans-serif; caret-color: var(--red, #c8102e); } .ds-alan::placeholder { color: var(--muted, #5c5c5c); } .ds-alan:focus { border-color: var(--red, #c8102e); } .ds-ekle-btn { background: var(--red-bg, #c8102e); color: var(--on-red, #fff); font: 700 17px Archivo, system-ui, sans-serif; padding: 0 28px; min-height: 54px; border: 0; cursor: pointer; } .ds-ekle-btn:hover { filter: brightness(1.08); }"
+    },
+    {
+      "name": "Filtre Sekmeleri",
+      "kind": "chip",
+      "refersTo": "tab",
+      "description": "Hepsi / Aktif / Tamamlanan; bitişik mürekkep çerçeveli dikdörtgenler.",
+      "html": "<div class=\"ds-sekmeler\" role=\"group\"><button type=\"button\" aria-pressed=\"true\">Hepsi</button><button type=\"button\" aria-pressed=\"false\">Aktif</button><button type=\"button\" aria-pressed=\"false\">Tamamlanan</button></div>",
+      "css": ".ds-sekmeler { display: flex; } .ds-sekmeler button { font: 400 15px Archivo, system-ui, sans-serif; color: var(--ink, #111); background: none; padding: 8px 16px; border: 1px solid var(--ink, #111); border-radius: 0; margin-left: -1px; cursor: pointer; } .ds-sekmeler button:first-child { margin-left: 0; } .ds-sekmeler button:hover { background: var(--field, #f3f3f3); } .ds-sekmeler button[aria-pressed=\"true\"] { background: var(--ink, #111); color: var(--leaf, #fff); } .ds-sekmeler button:focus-visible { outline: 2px solid var(--red, #c8102e); outline-offset: 3px; position: relative; }"
+    },
+    {
+      "name": "Görev Satırı",
+      "kind": "custom",
+      "refersTo": "task-row",
+      "description": "Onay kutusu, metin ve beliren ikon düğmeleri; altında kesik çizgi.",
+      "html": "<ul class=\"ds-liste\"><li><div class=\"ds-satir\"><input type=\"checkbox\" aria-label=\"Doblo vize yapılacak\"><span class=\"ds-metin\">Doblo vize yapılacak</span><span class=\"ds-aracli\"><button class=\"ds-ikon\" type=\"button\" aria-label=\"Düzenle\"><svg viewBox=\"0 0 20 20\"><path d=\"M13.5 3.5l3 3L7 16H4v-3z\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linejoin=\"round\"/></svg></button><button class=\"ds-ikon ds-sil\" type=\"button\" aria-label=\"Sil\"><svg viewBox=\"0 0 20 20\"><path d=\"M5 5l10 10M15 5L5 15\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\"/></svg></button></span></div></li><li class=\"ds-bitti\"><div class=\"ds-satir\"><input type=\"checkbox\" checked aria-label=\"Teklif kontrol edildi\"><span class=\"ds-metin\">Teklif kontrol edildi</span></div></li></ul>",
+      "css": ".ds-liste { list-style: none; margin: 0; padding: 0; } .ds-liste li { border-bottom: 1px dashed var(--line, #b4b4b4); } .ds-satir { display: flex; align-items: center; gap: 16px; min-height: 64px; padding: 10px 0; font: 400 19px/1.45 Archivo, system-ui, sans-serif; color: var(--ink, #111); background: var(--leaf, #fff); } .ds-metin { flex: 1; min-width: 0; overflow-wrap: anywhere; } .ds-bitti .ds-metin { text-decoration: line-through; text-decoration-thickness: 2px; color: var(--muted, #5c5c5c); } .ds-satir input[type=checkbox] { appearance: none; -webkit-appearance: none; margin: 0; flex: none; width: 24px; height: 24px; border: 2px solid var(--ink, #111); background: var(--leaf, #fff); cursor: pointer; } .ds-satir input[type=checkbox]:checked { background: var(--ink, #111) url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8.5l3.2 3L13 4.5' fill='none' stroke='%23ffffff' stroke-width='2.2' stroke-linecap='square'/%3E%3C/svg%3E\") center / 16px no-repeat; } .ds-satir input:focus-visible, .ds-ikon:focus-visible { outline: 2px solid var(--red, #c8102e); outline-offset: 3px; } .ds-aracli { display: flex; gap: 2px; opacity: 0; transition: opacity .15s; } .ds-liste li:hover .ds-aracli, .ds-liste li:focus-within .ds-aracli { opacity: 1; } .ds-ikon { width: 40px; height: 40px; display: grid; place-content: center; color: var(--muted, #5c5c5c); background: none; border: 0; cursor: pointer; } .ds-ikon:hover { color: var(--ink, #111); } .ds-ikon.ds-sil:hover { color: var(--red, #c8102e); } .ds-ikon svg { width: 20px; height: 20px; }"
+    },
+    {
+      "name": "Takvim Sütunu",
+      "kind": "custom",
+      "refersTo": "display",
+      "description": "İmza: ay, kırmızı dev gün numarası, gün adı, künye ve sayaçlar.",
+      "html": "<section class=\"ds-tarih\"><p class=\"ds-ay\">KASIM 2026</p><div class=\"ds-gun-no\">9</div><p class=\"ds-gun-ad\">PAZARTESİ</p><p class=\"ds-kunye\">46. hafta · 313/365</p><div class=\"ds-sayaclar\"><div><strong>4</strong>kalan</div><div><strong>2</strong>biten</div></div></section>",
+      "css": ".ds-tarih { padding: 40px; background: var(--leaf, #fff); color: var(--ink, #111); font-family: Archivo, system-ui, sans-serif; } .ds-ay { font: 400 36px/1.05 Anton, Archivo, sans-serif; margin: 0; } .ds-gun-no { font: 400 200px/.88 Anton, Archivo, sans-serif; color: var(--red, #c8102e); margin: 10px 0 6px -6px; font-variant-numeric: tabular-nums; } .ds-gun-ad { font: 400 46px/1.05 Anton, Archivo, sans-serif; letter-spacing: .03em; margin: 0; } .ds-kunye { color: var(--muted, #5c5c5c); font-size: 14px; margin: 8px 0 0; font-variant-numeric: tabular-nums; } .ds-sayaclar { display: flex; gap: 32px; margin-top: 28px; color: var(--muted, #5c5c5c); font-size: 15px; } .ds-sayaclar strong { display: block; font: 400 44px/1 Anton, Archivo, sans-serif; color: var(--ink, #111); font-variant-numeric: tabular-nums; }"
+    },
+    {
+      "name": "Takvim Yaprağı",
+      "kind": "card",
+      "refersTo": "leaf",
+      "description": "Sistemdeki tek kap: cilt şeridi, delikler, yırtık artık ve alttaki yaprak destesi.",
+      "html": "<div class=\"ds-yaprak\"><div class=\"ds-cilt\"><i></i><i></i><i></i></div><div class=\"ds-yaprak-ic\">Bugünün işleri</div></div>",
+      "css": ".ds-yaprak { position: relative; background: var(--leaf, #fff); color: var(--ink, #111); min-height: 200px; margin: 16px 16px 30px; box-shadow: 0 1px 0 var(--line, #b4b4b4), 0 4px 0 -1px var(--leaf, #fff), 0 5px 0 -1px var(--line, #b4b4b4), 0 8px 0 -2px var(--leaf, #fff), 0 9px 0 -2px var(--line, #b4b4b4), 0 12px 0 -3px var(--leaf, #fff), 0 13px 0 -3px var(--line, #b4b4b4), 0 26px 40px -18px rgb(0 0 0 / .4); } .ds-cilt { position: absolute; inset: 0 0 auto 0; height: 34px; background: var(--strip, #111); display: flex; justify-content: center; gap: 22%; align-items: center; } .ds-cilt i { width: 13px; height: 13px; border-radius: 50%; background: var(--wall, #d9dadc); } .ds-cilt::after { content: \"\"; position: absolute; left: 0; right: 0; top: 100%; height: 7px; background: var(--field, #f3f3f3); -webkit-mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 9px 100%; mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 9px 100%; } .ds-yaprak-ic { padding: 74px 48px 36px; font: 700 30px Archivo, system-ui, sans-serif; letter-spacing: -.01em; }"
+    },
+    {
+      "name": "Tamamlananları Kopar",
+      "kind": "button",
+      "refersTo": "tear-off-action",
+      "description": "İmza eylemi: biten satırları yırtıp düşüren kırmızı metin düğmesi.",
+      "html": "<button class=\"ds-kopar\" type=\"button\"><svg viewBox=\"0 0 20 20\" aria-hidden=\"true\"><path d=\"M2 6h16M2 6l1.5 11h13L18 6M7 6V3h6v3\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-dasharray=\"3 2\"/></svg>Tamamlananları kopar</button>",
+      "css": ".ds-kopar { color: var(--red, #c8102e); font: 700 15px Archivo, system-ui, sans-serif; display: inline-flex; align-items: center; gap: 8px; padding: 8px 0; background: none; border: 0; cursor: pointer; } .ds-kopar svg { width: 18px; height: 18px; } .ds-kopar:hover { text-decoration: underline; text-underline-offset: 3px; } .ds-kopar:focus-visible { outline: 2px solid var(--red, #c8102e); outline-offset: 3px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Takvim Yaprağı",
+    "overview": "Arayüz, ofis duvarına asılı koparmalı günlük takvimin bugünkü yaprağıdır. Gri bir duvarın üstünde ince, beyaz bir kâğıt yaprak durur; tepesinde siyah ciltleme şeridi ve üç delik, altında üst üste binmiş yarınki yaprakların ince kenarları görünür. Yaprak iki renkle basılmıştır: siyah mürekkep ve takvim kırmızısı. Başka renk yoktur; hiyerarşi ölçek, ağırlık ve bu iki mürekkep arasındaki seçimle kurulur.\n\nYaprak ikiye bölünür: solda takvimin kendisi (ay, dev kırmızı gün numarası, gün adı, kalan/biten sayaçları, yaprağın sahibi), sağda günün işleri. Ayraçlar kesik çizgilidir, kâğıttaki delikli koparma hattını taşır. Köşeler keskindir, yüzeyler düzdür; tek derinlik takvim bloğunun kendisidir. İmza hareketi \"Tamamlananları kopar\": biten satırlar delikli çizgiden yırtılıp aşağı düşer.\n\nYoğunluk sakindir: gün boyu açık kalan bir sekmede göz yormayan geniş satırlar (64px), büyük dokunma hedefleri, süs yok. Açık/koyu tema zorunludur; koyu temada duvar neredeyse siyaha, yaprak kömür grisine döner, kırmızı daha açık bir tona çekilir.",
+    "keyCharacteristics": [
+      "İki mürekkep baskı: siyah ve takvim kırmızısı; üçüncü renk yok.",
+      "Anton dar kalın rakamlar takvimin sesi, Archivo işlerin sesi.",
+      "Sıfır köşe yarıçapı; yalnızca cilt delikleri yuvarlaktır.",
+      "Kesik çizgili (delikli) ayraçlar satırları ve sütunları ayırır.",
+      "Derinlik yalnızca yaprak bloğundan gelir; bileşenler düzdür.",
+      "Hareket kâğıt fiziğidir: yırtılma ve düşme."
+    ],
+    "rules": [
+      { "name": "İki Mürekkep Kuralı", "body": "Yaprakta yalnızca `ink` ve `red` basılır; renk ile hiyerarşi kurulmaz, ikinci bir vurgu rengi eklenmez.", "section": "colors" },
+      { "name": "Kırmızı Takvimindir Kuralı", "body": "Kırmızı günün kendisi (gün numarası), birincil eylem, odak ve hata içindir. Görev metni, başlık ve sayaçlar mürekkeptir.", "section": "colors" },
+      { "name": "Anton Takvimi Basar Kuralı", "body": "Anton yalnızca tarih ve sayılar içindir (ay, gün numarası, gün adı, sayaçlar). Başlık, düğme ve görev metni Archivo'dur.", "section": "typography" },
+      { "name": "Rakamlar Hizalı Kuralı", "body": "Gün numarası, sayaçlar ve künye `font-variant-numeric: tabular-nums` kullanır; sayılar değişirken yaprak oynamaz.", "section": "typography" },
+      { "name": "Tek Deste Kuralı", "body": "Gölge yalnızca takvim yaprağında bulunur. Düğme, alan, satır ve sekmeler düz kalır; durum renk ve çerçeveyle gösterilir.", "section": "elevation" }
+    ],
+    "dos": [
+      "**Do** her yeni yüzeyi yaprağın içinde kur: `leaf` zemin, `wall` duvar, tepede `strip` cilt.",
+      "**Do** satırları ve sütunları 1px kesik `line` çizgisiyle ayır; yapı çerçevelerini düz mürekkeple çiz.",
+      "**Do** tarih ve sayıları Anton, tabular rakamla yaz; diğer her şeyi Archivo ile.",
+      "**Do** kırmızıyı dolgu olarak kullanırken `red-bg` + `on-red`, metin olarak kullanırken `red` seç; koyu temada ikisi ayrışır.",
+      "**Do** her renk için koyu tema değerini aynı token adıyla tanımla.",
+      "**Do** odakta 2px kırmızı dış çizgi ve 3px boşluk kullan.",
+      "**Do** hareketi kâğıt fiziğinde tut (yırtılma, düşme) ve `prefers-reduced-motion` altında kapat."
+    ],
+    "donts": [
+      "**Don't** köşe yarıçapı verme; tek yuvarlak biçim cilt delikleridir.",
+      "**Don't** düğme, alan veya satırlara gölge ekleme; gölge yalnızca takvim bloğundadır.",
+      "**Don't** mavi veya üçüncü bir vurgu rengi ekleme; yaprak iki mürekkeple basılır.",
+      "**Don't** Anton'u başlık, düğme veya görev metni için kullanma.",
+      "**Don't** yaprağın içini ayrı kartlara bölme; bölümler kesik çizgiyle ayrılır."
+    ]
+  }
+}

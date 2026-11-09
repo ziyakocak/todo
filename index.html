@@ -3,160 +3,305 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
 <title>Yapılacaklar</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <style>
   :root {
     color-scheme: light dark;
-    --bg: #ffffff;
-    --fg: #1a1a1a;
-    --muted: #8a8a8a;
-    --line: #ececec;
-    --field: #f5f5f5;
-    --accent: #1a1a1a;
-    --accent-fg: #ffffff;
-    --danger: #d33;
-  }
-  @supports (color: AccentColor) {
-    :root { --accent: AccentColor; --accent-fg: AccentColorText; }
+    --wall: #d9dadc;
+    --leaf: #ffffff;
+    --ink: #111111;
+    --muted: #5c5c5c;
+    --line: #b4b4b4;
+    --field: #f3f3f3;
+    --red: #c8102e;
+    --red-bg: #c8102e;
+    --on-red: #ffffff;
+    --strip: #111111;
+    --check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8.5l3.2 3L13 4.5' fill='none' stroke='%23ffffff' stroke-width='2.2' stroke-linecap='square'/%3E%3C/svg%3E");
+    --display: "Anton", "Archivo", sans-serif;
+    --text: "Archivo", system-ui, sans-serif;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #121212;
-      --fg: #ececec;
-      --muted: #7a7a7a;
-      --line: #262626;
-      --field: #1c1c1c;
-      --danger: #ff6b6b;
-    }
-    @supports not (color: AccentColor) {
-      :root { --accent: #ececec; --accent-fg: #121212; }
+      --wall: #0b0b0c;
+      --leaf: #1b1b1d;
+      --ink: #ececec;
+      --muted: #a6a6a6;
+      --line: #46464a;
+      --field: #242427;
+      --red: #ff5468;
+      --red-bg: #e0263f;
+      --on-red: #ffffff;
+      --strip: #2c2c30;
+      --check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8.5l3.2 3L13 4.5' fill='none' stroke='%231b1b1d' stroke-width='2.2' stroke-linecap='square'/%3E%3C/svg%3E");
     }
   }
+
   * { box-sizing: border-box; }
   [hidden] { display: none !important; }
+  ::selection { background: var(--red-bg); color: var(--on-red); }
+  html { scrollbar-color: var(--line) var(--wall); }
   body {
     margin: 0;
     min-height: 100vh;
-    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-    background: var(--bg);
-    color: var(--fg);
+    background: var(--wall);
+    color: var(--ink);
+    font: 400 17px/1.45 var(--text);
+    caret-color: var(--red);
+    padding: 48px 24px;
     display: flex;
     justify-content: center;
-    padding: 72px 20px;
+    align-items: flex-start;
   }
-  .app { width: 100%; max-width: 520px; }
-  header { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 28px; }
-  h1 { margin: 0; font-size: 22px; font-weight: 600; letter-spacing: -.01em; }
-  h1 span { color: var(--muted); font-weight: 400; }
-  .hata { color: var(--danger); font-size: 14px; margin: 12px 0; }
-  input[type=text], input[type=password] {
-    min-width: 0;
-    padding: 10px 12px;
-    font: inherit;
-    color: inherit;
-    background: var(--field);
-    border: 1px solid transparent;
-    border-radius: 6px;
-    outline: none;
-  }
-  input[type=text]:focus, input[type=password]:focus { border-color: var(--accent); background: var(--bg); }
-  button { cursor: pointer; border: none; background: none; font: inherit; color: inherit; }
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; background: none; border: 0; padding: 0; }
   button:disabled { opacity: .5; cursor: default; }
-  .ekle {
-    background: var(--accent);
-    color: var(--accent-fg);
-    padding: 0 16px;
-    border-radius: 6px;
-    font-size: 14px;
-  }
-  .ekle:hover { opacity: .85; }
-  .link { color: var(--muted); font-size: 13px; }
-  .link:hover { color: var(--fg); }
+  :focus-visible { outline: 2px solid var(--red); outline-offset: 3px; }
 
-  /* Giriş */
-  #giris { max-width: 320px; margin: 0 auto; }
-  #giris h1 { margin-bottom: 24px; }
-  #giris form { display: flex; flex-direction: column; gap: 10px; }
-  #giris .ekle { padding: 11px; }
-  .gecis { margin-top: 20px; font-size: 13px; color: var(--muted); text-align: center; }
-  .link-vurgu { color: var(--fg); font-size: 13px; text-decoration: underline; text-underline-offset: 2px; }
+  /* ---------- Yaprak ---------- */
+  .yaprak {
+    width: 100%;
+    max-width: 1120px;
+    min-height: 720px;
+    background: var(--leaf);
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(300px, 400px) 1fr;
+    /* Koparmalı takvimin bloğu: yaprağın altında üst üste duran diğer günler */
+    box-shadow:
+      0 1px 0 var(--line),
+      0 4px 0 -1px var(--leaf), 0 5px 0 -1px var(--line),
+      0 8px 0 -2px var(--leaf), 0 9px 0 -2px var(--line),
+      0 12px 0 -3px var(--leaf), 0 13px 0 -3px var(--line),
+      0 26px 40px -18px rgb(0 0 0 / .4);
+    margin-bottom: 14px;
+  }
+  .cilt {
+    position: absolute; inset: 0 0 auto 0; height: 34px;
+    background: var(--strip);
+    display: flex; justify-content: center; gap: min(22%, 220px); align-items: center;
+  }
+  .cilt i { width: 13px; height: 13px; border-radius: 50%; background: var(--wall); }
+  /* Dünkü yaprağın ciltte kalan yırtık artığı */
+  .cilt::after {
+    content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 7px;
+    background: var(--field);
+    -webkit-mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 9px 100%;
+    mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 9px 100%;
+  }
 
-  /* Liste */
-  #yeniForm { display: flex; gap: 8px; }
-  #yeniForm input { flex: 1; }
-  .filtreler { display: flex; gap: 16px; margin: 20px 0 6px; font-size: 14px; }
-  .filtreler button { color: var(--muted); padding: 2px 0; border-bottom: 1px solid transparent; }
-  .filtreler button:hover { color: var(--fg); }
-  .filtreler button.aktif { color: var(--fg); border-bottom-color: var(--fg); }
-  ul { list-style: none; padding: 0; margin: 0; }
-  li {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--line);
+  /* Tarih sütunu */
+  .tarih {
+    padding: 74px 40px 36px;
+    border-right: 1px dashed var(--line);
+    display: flex; flex-direction: column;
   }
-  li input[type=checkbox] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--accent); margin: 0; }
-  li .metin { flex: 1; font-size: 15px; word-break: break-word; cursor: text; }
-  li.bitti .metin { text-decoration: line-through; color: var(--muted); }
-  li .duzenle {
-    flex: 1; font-size: 15px; padding: 2px 6px; margin: -3px 0;
-    border: 1px solid var(--accent) !important;
+  .ay { font-family: var(--display); font-weight: 400; font-size: 36px; line-height: 1.05; margin: 0; }
+  .kunye { color: var(--muted); font-size: 14px; margin: 8px 0 0; font-variant-numeric: tabular-nums; }
+  .gun-no {
+    font-family: var(--display); font-weight: 400;
+    font-size: clamp(160px, 22vw, 272px); line-height: .88;
+    color: var(--red); margin: 10px 0 6px -6px;
+    font-variant-numeric: tabular-nums;
   }
-  li .sil { color: var(--muted); font-size: 18px; line-height: 1; padding: 0 4px; opacity: 0; transition: opacity .15s; }
-  li .sil:hover { color: var(--danger); }
-  li:hover .sil { opacity: 1; }
-  @media (hover: none) { li .sil { opacity: 1; } }
-  .alt { display: flex; justify-content: space-between; margin-top: 16px; font-size: 13px; color: var(--muted); }
-  .bos { text-align: center; color: var(--muted); padding: 32px 0; font-size: 14px; }
-  .ipucu { font-size: 12px; color: var(--muted); margin-top: 40px; text-align: center; opacity: .7; }
+  .gun-ad { font-family: var(--display); font-size: 46px; line-height: 1.05; letter-spacing: .03em; margin: 0; }
+  .sayaclar { display: flex; gap: 32px; margin-top: 28px; color: var(--muted); font-size: 15px; }
+  .sayaclar strong { display: block; font-family: var(--display); font-weight: 400; font-size: 44px; line-height: 1; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .sahip {
+    margin-top: auto; padding-top: 14px; border-top: 2px solid var(--ink);
+    display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 15px;
+  }
+  .sahip b { font-size: 20px; }
+  .link { color: var(--muted); text-decoration: underline; text-underline-offset: 3px; font-size: 15px; }
+  .link:hover { color: var(--ink); }
+
+  /* İş sütunu */
+  .is { padding: 74px 48px 36px; display: flex; flex-direction: column; min-width: 0; }
+  .baslik { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+  h1 { font-size: 30px; font-weight: 700; letter-spacing: -.01em; margin: 0; }
+  .sekmeler { display: flex; }
+  .sekmeler button { font-size: 15px; padding: 8px 16px; border: 1px solid var(--ink); margin-left: -1px; }
+  .sekmeler button:first-child { margin-left: 0; }
+  .sekmeler button:hover { background: var(--field); }
+  .sekmeler button[aria-pressed="true"] { background: var(--ink); color: var(--leaf); }
+
+  .ekle { display: flex; margin: 28px 0 10px; }
+  .alan {
+    flex: 1; min-width: 0; height: 54px; padding: 0 16px;
+    background: var(--leaf); border: 2px solid var(--ink); border-radius: 0; outline: none; font-size: 18px;
+  }
+  .alan::placeholder { color: var(--muted); }
+  .alan:focus { border-color: var(--red); }
+  .kirmizi {
+    background: var(--red-bg); color: var(--on-red);
+    font-weight: 700; font-size: 17px; padding: 0 28px; min-height: 54px;
+  }
+  .kirmizi:hover { filter: brightness(1.08); }
+
+  .hata { color: var(--red); font-size: 15px; margin: 10px 0 0; }
+
+  ul { list-style: none; margin: 0; padding: 0; }
+  li { border-bottom: 1px dashed var(--line); }
+  .satir {
+    display: flex; align-items: center; gap: 16px; min-height: 64px; padding: 10px 0;
+    font-size: 19px; background: var(--leaf); transform-origin: 0 100%;
+  }
+  li .metin { flex: 1; min-width: 0; overflow-wrap: anywhere; cursor: text; }
+  li.bitti .metin { text-decoration: line-through; text-decoration-thickness: 2px; color: var(--muted); }
+  input[type=checkbox] {
+    appearance: none; -webkit-appearance: none; margin: 0; flex: none;
+    width: 24px; height: 24px; border: 2px solid var(--ink); background: var(--leaf);
+    cursor: pointer; display: grid; place-content: center;
+  }
+  input[type=checkbox]:checked { background: var(--ink) var(--check) center / 16px no-repeat; }
+  .aracli { display: flex; gap: 2px; opacity: 0; transition: opacity .15s; }
+  li:hover .aracli, li:focus-within .aracli { opacity: 1; }
+  @media (hover: none) { .aracli { opacity: 1; } }
+  .ikon { width: 40px; height: 40px; display: grid; place-content: center; color: var(--muted); }
+  .ikon:hover { color: var(--ink); }
+  .ikon.sil:hover { color: var(--red); }
+  .ikon svg { width: 20px; height: 20px; }
+  .duzenle {
+    flex: 1; min-width: 0; font-size: 19px; padding: 6px 10px; margin: -8px 0;
+    border: 2px solid var(--red); background: var(--leaf); outline: none;
+  }
+  li.bos { display: block; padding: 40px 0; color: var(--muted); font-size: 17px; border-bottom: 1px dashed var(--line); }
+  .bos b { display: block; color: var(--ink); font-size: 20px; margin-bottom: 4px; }
+
+  .alt { margin-top: auto; padding-top: 28px; display: flex; justify-content: space-between; align-items: center; gap: 16px; font-size: 15px; color: var(--muted); }
+  .kopar { color: var(--red); font-weight: 700; font-size: 15px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 0; }
+  .kopar svg { width: 18px; height: 18px; }
+  .kopar:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+  /* İmza hareketi: biten satır kâğıt şerit olarak delikli çizgiden yırtılır ve düşer;
+     delikli çizgi yaprakta kalır */
+  li.kopuyor .satir {
+    --z: 5px;
+    -webkit-mask:
+      conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) top / calc(2 * var(--z)) var(--z) repeat-x,
+      conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / calc(2 * var(--z)) var(--z) repeat-x,
+      linear-gradient(#000 0 0) center / 100% calc(100% - 2 * var(--z)) no-repeat;
+    mask:
+      conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) top / calc(2 * var(--z)) var(--z) repeat-x,
+      conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / calc(2 * var(--z)) var(--z) repeat-x,
+      linear-gradient(#000 0 0) center / 100% calc(100% - 2 * var(--z)) no-repeat;
+    background: var(--field);
+    position: relative; z-index: 1;
+    animation: kop .6s cubic-bezier(.5, 0, .85, .4) forwards;
+    animation-delay: inherit;
+  }
+  @keyframes kop {
+    0%   { transform: none; opacity: 1; }
+    30%  { transform: translateY(3px) rotate(-1.5deg); opacity: 1; }
+    100% { transform: translateY(90px) rotate(-8deg); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) { li.kopuyor .satir { animation-duration: .01s; } }
+
+  .ipucu-dokun { display: none; }
+  @media (hover: none) { .ipucu-masa { display: none; } .ipucu-dokun { display: inline; } }
+
+  /* Giriş formu */
+  .giris-form { display: flex; flex-direction: column; gap: 12px; max-width: 420px; margin-top: 28px; }
+  .giris-form .alan { flex: none; }
+  .giris-form .kirmizi { margin-top: 6px; }
+  .gecis { margin-top: 22px; font-size: 15px; color: var(--muted); }
+  .gecis button { color: var(--ink); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; margin-left: 4px; }
+  .aciklama { color: var(--muted); font-size: 16px; margin: 10px 0 0; max-width: 46ch; }
+
+  /* ---------- Telefon ---------- */
+  @media (max-width: 760px) {
+    body { padding: 12px; font-size: 16px; }
+    .yaprak { grid-template-columns: 1fr; min-height: calc(100vh - 24px); }
+    .cilt { height: 26px; }
+    .cilt i { width: 10px; height: 10px; }
+    .tarih {
+      padding: 42px 20px 16px; border-right: 0; border-bottom: 1px dashed var(--line);
+      display: grid; grid-template-columns: auto 1fr; column-gap: 16px; align-items: end;
+    }
+    .ay { grid-column: 1 / -1; font-size: 24px; }
+    .kunye { grid-column: 2; margin-top: 2px; font-size: 13px; }
+    .gun-no { font-size: 112px; margin: 4px 0 0 -3px; grid-row: 2 / 5; }
+    .gun-ad { font-size: 30px; align-self: end; }
+    .sayaclar { margin-top: 6px; gap: 22px; font-size: 13px; align-self: start; }
+    .sayaclar strong { font-size: 30px; }
+    .sahip { grid-column: 1 / -1; margin-top: 14px; font-size: 14px; }
+    .sahip b { font-size: 17px; }
+    .is { padding: 22px 20px 20px; }
+    h1 { font-size: 24px; }
+    .sekmeler { width: 100%; }
+    .sekmeler button { flex: 1; padding: 10px 6px; font-size: 14px; }
+    .ekle { margin-top: 20px; }
+    .alan { height: 52px; font-size: 16px; }
+    .kirmizi { padding: 0 20px; }
+    .satir { font-size: 17px; gap: 12px; min-height: 58px; }
+    .duzenle { font-size: 17px; }
+    .alt { flex-wrap: wrap; }
+  }
 </style>
 </head>
 <body>
-<div class="app">
+<main class="yaprak">
+  <div class="cilt" aria-hidden="true"><i></i><i></i><i></i></div>
 
-  <!-- Giriş ekranı -->
-  <section id="giris" hidden>
-    <h1>Yapılacaklar</h1>
-    <form id="girisForm">
-      <input id="kullanici" type="text" placeholder="Kullanıcı adı" autocomplete="username" autocapitalize="none" required>
-      <input id="sifre" type="password" placeholder="Şifre" autocomplete="current-password" required>
-      <input id="sifre2" type="password" placeholder="Şifre (tekrar)" autocomplete="new-password" hidden>
-      <button id="girisButon" class="ekle" type="submit">Giriş yap</button>
-    </form>
-    <div id="girisHata" class="hata" hidden></div>
-    <div class="gecis">
-      <span id="gecisMetin">Hesabın yok mu?</span>
-      <button id="gecisButon" type="button" class="link-vurgu">Kayıt ol</button>
+  <section class="tarih" aria-label="Bugün">
+    <p class="ay" id="ay"></p>
+    <div class="gun-no" id="gunNo"></div>
+    <p class="gun-ad" id="gunAd"></p>
+    <p class="kunye" id="kunye"></p>
+    <div class="sayaclar" id="sayaclar" hidden>
+      <div><strong id="kalanSayi">0</strong>kalan</div>
+      <div><strong id="bitenSayi">0</strong>biten</div>
+    </div>
+    <div class="sahip" id="sahip" hidden>
+      <span>Yaprağın sahibi <b id="ad"></b></span>
+      <button id="cikis" class="link" type="button">Çıkış yap</button>
     </div>
   </section>
 
-  <!-- Kullanıcının listesi -->
-  <section id="uygulama" hidden>
-    <header>
-      <h1><span id="ad"></span> <span>yapılacak</span></h1>
-      <button id="cikis" class="link">Çıkış yap</button>
-    </header>
-    <form id="yeniForm">
-      <input id="yeni" type="text" placeholder="Yeni görev..." autocomplete="off">
-      <button class="ekle" type="submit">Ekle</button>
+  <!-- Giriş / kayıt -->
+  <section class="is" id="giris" hidden>
+    <h1 id="girisBaslik">Giriş yap</h1>
+    <p class="aciklama" id="girisAciklama">Kullanıcı adın ve şifrenle bugünün yaprağını aç.</p>
+    <form id="girisForm" class="giris-form" novalidate>
+      <input id="kullanici" class="alan" type="text" placeholder="Kullanıcı adı" autocomplete="username" autocapitalize="none" spellcheck="false" aria-label="Kullanıcı adı" required>
+      <input id="sifre" class="alan" type="password" placeholder="Şifre" autocomplete="current-password" aria-label="Şifre" required>
+      <input id="sifre2" class="alan" type="password" placeholder="Şifre (tekrar)" autocomplete="new-password" aria-label="Şifre tekrar" hidden>
+      <button id="girisButon" class="kirmizi" type="submit">Giriş yap</button>
+      <p id="girisHata" class="hata" role="alert" hidden></p>
     </form>
-    <div class="filtreler">
-      <button data-f="hepsi" class="aktif">Hepsi</button>
-      <button data-f="aktif">Aktif</button>
-      <button data-f="bitti">Tamamlanan</button>
+    <p class="gecis"><span id="gecisMetin">Hesabın yok mu?</span><button id="gecisButon" type="button">Kayıt ol</button></p>
+  </section>
+
+  <!-- Liste -->
+  <section class="is" id="uygulama" hidden>
+    <div class="baslik">
+      <h1>Bugünün işleri</h1>
+      <div class="sekmeler" role="group" aria-label="Göster">
+        <button type="button" data-f="hepsi" aria-pressed="true">Hepsi</button>
+        <button type="button" data-f="aktif" aria-pressed="false">Aktif</button>
+        <button type="button" data-f="bitti" aria-pressed="false">Tamamlanan</button>
+      </div>
     </div>
-    <div id="hata" class="hata" hidden></div>
-    <ul id="liste"></ul>
+    <form id="yeniForm" class="ekle">
+      <input id="yeni" class="alan" type="text" placeholder="Yeni görev yaz..." autocomplete="off" aria-label="Yeni görev">
+      <button class="kirmizi" type="submit">Ekle</button>
+    </form>
+    <p id="hata" class="hata" role="alert" hidden></p>
+    <ul id="liste" aria-live="polite"></ul>
     <div class="alt">
-      <span id="sayac"></span>
-      <button id="temizle" class="link">Tamamlananları sil</button>
+      <span><span class="ipucu-masa">Düzenlemek için göreve çift tıkla</span><span class="ipucu-dokun">Düzenlemek için kaleme dokun</span></span>
+      <button id="temizle" class="kopar" type="button" hidden>
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2 6h16M2 6l1.5 11h13L18 6M7 6V3h6v3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="3 2"/></svg>
+        Tamamlananları kopar
+      </button>
     </div>
-    <div class="ipucu">Düzenlemek için göreve çift tıkla</div>
   </section>
-
-</div>
+</main>
 
 <script>
   // Supabase bağlantısı (publishable anahtar tarayıcıda kullanılmak içindir;
@@ -175,6 +320,33 @@
   let duzenleniyor = false;
   let kullanici = null;
 
+  const IKON = {
+    duzenle: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M13.5 3.5l3 3L7 16H4v-3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>',
+    sil: '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" fill="none" stroke="currentColor" stroke-width="1.9"/></svg>'
+  };
+
+  // ---------- Takvim yaprağı: bugünün tarihi ----------
+  function tarihiYaz() {
+    const bugun = new Date();
+    const tr = s => s.toLocaleUpperCase("tr");
+    $("ay").textContent = tr(bugun.toLocaleDateString("tr-TR", { month: "long", year: "numeric" }));
+    $("gunNo").textContent = bugun.getDate();
+    $("gunAd").textContent = tr(bugun.toLocaleDateString("tr-TR", { weekday: "long" }));
+    // Takvim yaprağının küçük baskısı: ISO hafta numarası ve yılın kaçıncı günü
+    const yilBasi = new Date(bugun.getFullYear(), 0, 1);
+    const yilinGunu = Math.round((new Date(bugun.getFullYear(), bugun.getMonth(), bugun.getDate()) - yilBasi) / 864e5) + 1;
+    const yilUzunlugu = new Date(bugun.getFullYear(), 1, 29).getDate() === 29 ? 366 : 365;
+    const p = new Date(Date.UTC(bugun.getFullYear(), bugun.getMonth(), bugun.getDate()));
+    p.setUTCDate(p.getUTCDate() + 4 - (p.getUTCDay() || 7));
+    const hafta = Math.ceil(((p - Date.UTC(p.getUTCFullYear(), 0, 1)) / 864e5 + 1) / 7);
+    $("kunye").textContent = hafta + ". hafta · " + yilinGunu + "/" + yilUzunlugu;
+  }
+
+  // Ağ kaynaklı hataları (bağlantı yok, sunucuya ulaşılamadı) ayırt et
+  const agHatasi = e => /fetch|network|load failed/i.test((e && e.message) || "");
+  tarihiYaz();
+  setInterval(tarihiYaz, 60000);
+
   // ---------- Giriş / çıkış ----------
   function kullaniciAdi(user) {
     const ad = user.email.replace(EPOSTA_UZANTISI, "");
@@ -185,6 +357,8 @@
     kullanici = user;
     $("giris").hidden = !!user;
     $("uygulama").hidden = !user;
+    $("sahip").hidden = !user;
+    $("sayaclar").hidden = !user;
     if (user) {
       $("ad").textContent = kullaniciAdi(user);
       yukleniyor = true;
@@ -207,9 +381,12 @@
   $("gecisButon").onclick = () => {
     kayitModu = !kayitModu;
     $("sifre2").hidden = !kayitModu;
-    $("sifre2").required = kayitModu;
     $("sifre").autocomplete = kayitModu ? "new-password" : "current-password";
     $("sifre").placeholder = kayitModu ? "Şifre (en az 8 karakter)" : "Şifre";
+    $("girisBaslik").textContent = kayitModu ? "Kayıt ol" : "Giriş yap";
+    $("girisAciklama").textContent = kayitModu
+      ? "Bir kullanıcı adı ve şifre seç; kendi yaprağın hemen açılır."
+      : "Kullanıcı adın ve şifrenle bugünün yaprağını aç.";
     $("girisButon").textContent = kayitModu ? "Kayıt ol" : "Giriş yap";
     $("gecisMetin").textContent = kayitModu ? "Zaten hesabın var mı?" : "Hesabın yok mu?";
     $("gecisButon").textContent = kayitModu ? "Giriş yap" : "Kayıt ol";
@@ -219,10 +396,10 @@
 
   const HATALAR = {
     invalid_credentials: "Kullanıcı adı veya şifre hatalı.",
-    user_already_exists: "Bu kullanıcı adı alınmış.",
+    user_already_exists: "Bu kullanıcı adı alınmış. Başka bir ad dene.",
     weak_password: "Şifre en az 8 karakter olmalı.",
-    over_request_rate_limit: "Çok fazla deneme yapıldı, biraz bekleyip tekrar dene.",
-    over_email_send_rate_limit: "Çok fazla deneme yapıldı, biraz bekleyip tekrar dene."
+    over_request_rate_limit: "Çok fazla deneme yapıldı. Biraz bekleyip tekrar dene.",
+    over_email_send_rate_limit: "Çok fazla deneme yapıldı. Biraz bekleyip tekrar dene."
   };
 
   $("girisForm").onsubmit = async e => {
@@ -233,20 +410,26 @@
     if (!/^[a-z0-9._-]{3,20}$/.test(ad)) {
       return girisHatasi("Kullanıcı adı 3-20 karakter olmalı; sadece İngilizce harf, rakam, nokta, tire ve alt çizgi içerebilir.");
     }
+    if (!sifre) return girisHatasi("Şifreni yaz.");
     if (kayitModu && sifre.length < 8) return girisHatasi("Şifre en az 8 karakter olmalı.");
-    if (kayitModu && sifre !== $("sifre2").value) return girisHatasi("Şifreler aynı değil.");
+    if (kayitModu && sifre !== $("sifre2").value) return girisHatasi("Şifreler aynı değil. İkisini de tekrar yaz.");
 
     const buton = $("girisButon");
+    const eskiYazi = buton.textContent;
     buton.disabled = true;
+    buton.textContent = kayitModu ? "Kaydediliyor..." : "Açılıyor...";
     girisHatasi("");
     const bilgi = { email: ad + EPOSTA_UZANTISI, password: sifre };
     const { data, error } = kayitModu
       ? await db.auth.signUp(bilgi)
       : await db.auth.signInWithPassword(bilgi);
     buton.disabled = false;
+    buton.textContent = eskiYazi;
 
     if (error) {
-      return girisHatasi(HATALAR[error.code] || (kayitModu ? "Kayıt olunamadı: " : "Giriş yapılamadı: ") + error.message);
+      return girisHatasi(HATALAR[error.code] || (agHatasi(error)
+        ? "Sunucuya ulaşılamadı. Bağlantını kontrol edip tekrar dene."
+        : (kayitModu ? "Kayıt olunamadı." : "Giriş yapılamadı.") + " Biraz sonra tekrar dene."));
     }
     if (!data.session) return girisHatasi("Kayıt oluşturuldu ama oturum açılamadı. Giriş yapmayı dene.");
     $("sifre").value = "";
@@ -267,7 +450,10 @@
 
   async function calistir(is) {
     const { error } = await is();
-    hataGoster(error ? "Hata: " + error.message : "");
+    hataGoster(!error ? "" : agHatasi(error)
+      ? "Sunucuya ulaşılamadı. Bağlantını kontrol edip tekrar dene."
+      : "Değişiklik kaydedilemedi. Sayfayı yenileyip tekrar dene.");
+    if (error) console.error(error);
     ciz();
   }
 
@@ -297,27 +483,47 @@
   });
 
   // ---------- Çizim ----------
+  const BOS = {
+    hepsi: ["Bu yaprak boş.", "Yukarıdaki alana bugünün ilk işini yaz."],
+    aktif: ["Bekleyen iş kalmadı.", "Bugünün bütün işleri bitti."],
+    bitti: ["Henüz biten iş yok.", "Bir işi bitirince kutusunu işaretle."]
+  };
+
   function ciz() {
     duzenleniyor = false;
     const liste = $("liste");
     liste.innerHTML = "";
+    const biten = gorevler.filter(g => g.bitti).length;
+    $("kalanSayi").textContent = gorevler.length - biten;
+    $("bitenSayi").textContent = biten;
+    $("temizle").hidden = biten === 0;
+
     if (yukleniyor) {
-      liste.innerHTML = '<div class="bos">Yükleniyor...</div>';
-      $("sayac").textContent = "";
+      liste.innerHTML = '<li class="bos">Yaprak hazırlanıyor...</li>';
       return;
     }
     const gorunen = gorevler.filter(g =>
       filtre === "hepsi" ? true : filtre === "aktif" ? !g.bitti : g.bitti
     );
-    if (gorunen.length === 0) liste.innerHTML = '<div class="bos">Görev yok</div>';
+    if (gorunen.length === 0) {
+      const li = document.createElement("li");
+      li.className = "bos";
+      li.innerHTML = "<b></b><span></span>";
+      li.querySelector("b").textContent = BOS[filtre][0];
+      li.querySelector("span").textContent = BOS[filtre][1];
+      liste.appendChild(li);
+      return;
+    }
 
     gorunen.forEach(g => {
       const li = document.createElement("li");
+      li.dataset.id = g.id;
       if (g.bitti) li.classList.add("bitti");
 
       const kutu = document.createElement("input");
       kutu.type = "checkbox";
       kutu.checked = g.bitti;
+      kutu.setAttribute("aria-label", g.metin + (g.bitti ? " (tamamlandı)" : ""));
       kutu.onchange = () => guncelle(g, { bitti: kutu.checked });
 
       const metin = document.createElement("span");
@@ -325,17 +531,28 @@
       metin.textContent = g.metin;
       metin.ondblclick = () => duzenle(li, metin, g);
 
-      const silBtn = document.createElement("button");
-      silBtn.className = "sil";
-      silBtn.textContent = "×";
-      silBtn.title = "Sil";
-      silBtn.onclick = () => sil([g.id]);
+      const araclar = document.createElement("span");
+      araclar.className = "aracli";
+      const dBtn = document.createElement("button");
+      dBtn.type = "button";
+      dBtn.className = "ikon";
+      dBtn.innerHTML = IKON.duzenle;
+      dBtn.setAttribute("aria-label", "Düzenle: " + g.metin);
+      dBtn.onclick = () => duzenle(li, metin, g);
+      const sBtn = document.createElement("button");
+      sBtn.type = "button";
+      sBtn.className = "ikon sil";
+      sBtn.innerHTML = IKON.sil;
+      sBtn.setAttribute("aria-label", "Sil: " + g.metin);
+      sBtn.onclick = () => sil([g.id]);
+      araclar.append(dBtn, sBtn);
 
-      li.append(kutu, metin, silBtn);
+      const satir = document.createElement("div");
+      satir.className = "satir";
+      satir.append(kutu, metin, araclar);
+      li.appendChild(satir);
       liste.appendChild(li);
     });
-
-    $("sayac").textContent = gorevler.filter(g => !g.bitti).length + " görev kaldı";
   }
 
   function duzenle(li, metin, g) {
@@ -344,7 +561,8 @@
     inp.type = "text";
     inp.className = "duzenle";
     inp.value = g.metin;
-    li.replaceChild(inp, metin);
+    inp.setAttribute("aria-label", "Görevi düzenle");
+    metin.replaceWith(inp);
     inp.focus();
     inp.select();
 
@@ -367,21 +585,29 @@
   $("yeniForm").onsubmit = e => {
     e.preventDefault();
     const metin = $("yeni").value.trim();
-    if (!metin) return;
+    if (!metin) return $("yeni").focus();
     $("yeni").value = "";
     ekle(metin);
   };
 
-  document.querySelectorAll(".filtreler button").forEach(b => {
+  document.querySelectorAll(".sekmeler button").forEach(b => {
     b.onclick = () => {
       filtre = b.dataset.f;
-      document.querySelectorAll(".filtreler button").forEach(x => x.classList.remove("aktif"));
-      b.classList.add("aktif");
+      document.querySelectorAll(".sekmeler button").forEach(x => x.setAttribute("aria-pressed", x === b));
       ciz();
     };
   });
 
-  $("temizle").onclick = () => sil(gorevler.filter(g => g.bitti).map(g => g.id));
+  // İmza hareketi: biten satırlar yaprak gibi kopup düşer, sonra silinir
+  $("temizle").onclick = () => {
+    const ids = gorevler.filter(g => g.bitti).map(g => g.id);
+    if (!ids.length) return;
+    const satirlar = [...$("liste").querySelectorAll("li")].filter(li => ids.includes(Number(li.dataset.id)));
+    satirlar.forEach((li, i) => { li.style.animationDelay = i * 60 + "ms"; li.classList.add("kopuyor"); });
+    const sure = satirlar.length ? 640 + (satirlar.length - 1) * 60 : 0;
+    duzenleniyor = true;
+    setTimeout(() => sil(ids), sure);
+  };
 
   // Başka cihazdaki değişiklikleri görmek için: sekmeye dönünce ve 20 saniyede bir yenile
   const yenile = () => { if (kullanici && !duzenleniyor && !document.hidden) yukle(); };

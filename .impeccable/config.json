@@ -1,0 +1,35 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "design-system-font",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/assigned.html"
+        ],
+        "createdAt": "2026-11-09T19:02:33.175Z",
+        "reason": "Claude: unchosen decision-round sketch of a different direction; its own fonts are intentional, not part of the shipped Takvim Yaprağı system"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/challenger-airport.html"
+        ],
+        "createdAt": "2026-11-09T19:02:33.610Z",
+        "reason": "Claude: unchosen decision-round sketch of a different direction; its own fonts are intentional, not part of the shipped Takvim Yaprağı system"
+      },
+      {
+        "rule": "design-system-font",
+        "value": "*",
+        "files": [
+          ".impeccable/mocks/decision/challenger-board.html"
+        ],
+        "createdAt": "2026-11-09T19:02:33.996Z",
+        "reason": "Claude: unchosen decision-round sketch of a different direction; its own fonts are intentional, not part of the shipped Takvim Yaprağı system"
+      }
+    ]
+  }
+}
